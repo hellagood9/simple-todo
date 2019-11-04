@@ -14,7 +14,8 @@ const postTask = async (req, res, next) => {
   try {
     const { name, category, scheduled } = req.body;
     const createdTask = await Task.create({ name, category, scheduled })
-    res.status(201).redirect("/tasks")
+    
+    res.status(201).json(createdTask)
   } catch(err) { res.status(400).json({ message: err.message }) }
 };
 
@@ -40,7 +41,7 @@ const getTask = async (req, res, next) => {
 
 const putTask = async (req, res, next) => {
   try {
-    const { name, category, scheduled } = req.body;
+    const { name, category, scheduled, status } = req.body;
     const task = await Task.findById(req.params.id)
 
     if (!task) res.status(404).json({ message: 'Task not found' }) 
@@ -48,6 +49,7 @@ const putTask = async (req, res, next) => {
     if (task.name !== null) task.name = name || task.name
     task.category = category || task.category
     task.scheduled = scheduled || task.scheduled
+    task.status = status || task.status
 
     const updatedTask = await task.save()
     res.status(201).json(updatedTask)
